@@ -11,19 +11,20 @@ NUM_REMOVED     = 9
 TOKENS          = 11
 
 class Player:
-    def __init__(self, id, name, tokens):
+    def __init__(self, id, name, file, tokens):
         self.key = id
         self.name = name
         self.cards = []
         self.tokens = tokens
         self.name = name
+        self.file = file
         self.score = 0
 
 def get_play(game_id, players, current_card,
             current_tokens, player_index, catch_exceptions):
     play = 0
     try :
-        play = bool(f_get_play(players, current_card,
+        play = bool(players[player_index].file(players, current_card,
                                 current_tokens, player_index))
     except KeyboardInterrupt :
         raise
@@ -31,7 +32,6 @@ def get_play(game_id, players, current_card,
         if not catch_exceptions :
             raise
         logging.warn('caught exception "%s" calling %s (%s) \'s get_play() function' % (sys.exc_info()[1],who,player_name))
-    logging.debug('LOG_PLAY\tG%sH%d\t%s-%s\t%s\t%s\t%d' % (game_id, players, current_card, current_tokens, player_index, play))
     return play
 
 def play_game(game_id, players_in, catch_exceptions):
@@ -40,10 +40,11 @@ def play_game(game_id, players_in, catch_exceptions):
 
     # Get the players and give each 11 tokens
     players = []
-    for player_in in players_in:
-        players.append(Player(player_in.id, player_in.name, TOKENS))
+    for key in players_in:
+        players.append(Player(players_in[key].id, players_in[key].name,
+                              players_in[key].file, TOKENS))
     logging.info('=' * 50)
-    logging.info('Starting a new game between %s' % ', '.join(lambda x: players[x].name))
+    logging.info('Starting a new game between %s' % ', '.join(x.name for x in players))
 
     # Pick a player to start
     random.shuffle(players)
@@ -69,7 +70,7 @@ def play_game(game_id, players_in, catch_exceptions):
     ## GAMEPLAY
 
     # The game ends when there are no cards left in the deck
-    while cards.length > 0:
+    while len(deck) > 0:
 
         # The current player may either take the face up card
         # or pass (if they have tokens)
@@ -94,7 +95,7 @@ def play_game(game_id, players_in, catch_exceptions):
                     % current_player.name, current_card, current_tokens)
 
             # They flip over the next card in the deck and start a new turn
-            current_card = cards.pop()
+            current_card = deck.pop()
             logging.info('%s flips over the %i' \
                 % current_player.name, curent_card)
             logging.info("it is still %s's turn" % current_player.name)

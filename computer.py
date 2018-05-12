@@ -3,4 +3,4 @@
 import logging
 
 def get_play(players, current_card, current_tokens, id):
-    return(current_card - current_token < 11)
+    return(current_card - current_tokens < 11)

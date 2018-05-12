@@ -54,7 +54,7 @@ def make_player(s, catch_exceptions):
 def play_games(n,seed,player_names,catch_exceptions) :
     random.seed(seed)
     logging.debug('SEED\t%s' % seed)
-    players = []
+    players = {}
     for name in player_names:
         id = chr(ord('A') + len(players))
         logging.info('making player %s (%s) ...' % (id, name))

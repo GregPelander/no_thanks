@@ -6,8 +6,8 @@ def get_play(players, current_card, current_tokens, id):
     me = players[id]
     ''' play against the computer '''
     logging.info('You are player "%s" | Current Card: %i | Current Tokens: %i \
-                |  Your Cards: %i | Your Tokens: %i' % (me.name, current_card,
-                current_tokens, me.cards, me.tokens))
+                |  Your Cards: %s | Your Tokens: %i' % (me.name, current_card,
+                current_tokens, ', '.join(me.cards), me.tokens))
     logging.info('"Pass" or "Take":')
     s = raw_input()
     x = (s == 'Pass')
