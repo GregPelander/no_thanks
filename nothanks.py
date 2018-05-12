@@ -1,0 +1,138 @@
+# nothanks.py -- main game engine
+import logging
+import random
+import sys
+
+##  ONFIGURATION
+#
+LOWEST_CARD     = 3
+HIGHEST_CARD    = 35
+NUM_REMOVED     = 9
+TOKENS          = 11
+
+class Player:
+    def __init__(self, id, name, tokens):
+        self.key = id
+        self.name = name
+        self.cards = []
+        self.tokens = tokens
+        self.name = name
+        self.score = 0
+
+def get_play(game_id, players, current_card,
+            current_tokens, player_index, catch_exceptions):
+    play = 0
+    try :
+        play = bool(f_get_play(players, current_card,
+                                current_tokens, player_index))
+    except KeyboardInterrupt :
+        raise
+    except :
+        if not catch_exceptions :
+            raise
+        logging.warn('caught exception "%s" calling %s (%s) \'s get_play() function' % (sys.exc_info()[1],who,player_name))
+    logging.debug('LOG_PLAY\tG%sH%d\t%s-%s\t%s\t%s\t%d' % (game_id, players, current_card, current_tokens, player_index, play))
+    return play
+
+def play_game(game_id, players_in, catch_exceptions):
+
+    ## SETUP
+
+    # Get the players and give each 11 tokens
+    players = []
+    for player_in in players_in:
+        players.append(Player(player_in.id, player_in.name, TOKENS))
+    logging.info('=' * 50)
+    logging.info('Starting a new game between %s' % ', '.join(lambda x: players[x].name))
+
+    # Pick a player to start
+    random.shuffle(players)
+    player_index = 0
+    curent_player = players[player_index]
+    logging.info('Player %s will start' % curent_player.name)
+
+    # Get a deck of (suitless) cards numbered 3 to 35
+    deck = list(range(LOWEST_CARD, HIGHEST_CARD))
+
+    # Remove 9 cards from the deck at random
+    random.shuffle(deck)
+    for _ in range(NUM_REMOVED):
+        deck.pop()
+
+    # Flip the top card of the deck face up
+    current_card = deck.pop()
+    current_tokens = 0
+    logging.info('The first card is %i.' % current_card)
+
+
+
+    ## GAMEPLAY
+
+    # The game ends when there are no cards left in the deck
+    while cards.length > 0:
+
+        # The current player may either take the face up card
+        # or pass (if they have tokens)
+        if(curent_player.tokens == 0):
+            take_card = True
+        else:
+            take_card = get_play(game_id, players, current_card,
+                                 current_tokens, player_index, catch_exceptions)
+
+        if(take_card):
+            # They collect any tokens on the card
+            current_player.tokens += current_tokens
+            current_tokens = 0
+
+            # They put the card face up in front of them
+            current_player.cards.append(current_card)
+            if(current_tokens == 1):
+                logging.info('%s takes the %i% and 1 token' \
+                    % current_player.name, current_card)
+            else:
+                logging.info('%s takes the %i% and %i tokens' \
+                    % current_player.name, current_card, current_tokens)
+
+            # They flip over the next card in the deck and start a new turn
+            current_card = cards.pop()
+            logging.info('%s flips over the %i' \
+                % current_player.name, curent_card)
+            logging.info("it is still %s's turn" % current_player.name)
+            continue
+
+        else:
+            # They put a token on the card and it is the next player's turn
+            current_tokens += 1
+            current_player.tokens -= 1
+            if(current_tokens == 1):
+                logging.info('%s passes and adds a token. \
+                    There is now 1 on the card'
+                    % current_player.name)
+            else:
+                logging.info('%s passes and adds a token. \
+                    There are now %i on the card'
+                    % current_player.name, current_tokens)
+            player_index += 1
+            current_player = players[player_index % players.len()]
+            logging.info("it is now %s's turn" % current_player.name)
+            continue
+
+    ## SCORING
+    winner = None
+    for player in players:
+        # Tokens are worth -1 point each
+        player.score -= player.tokens
+
+        # Single cards are worth their value
+        # A sequence of cards is worth the value of the lowest card in the sequence
+        player.cards.sort()
+        last_card = None
+        for card in player.cards:
+            if(last_card is None or card - last_card > 1):
+                player.score += card
+            last_card = card
+
+        if(winner is None or player.score > winner.score):
+            winner = player
+
+    return winner.key
