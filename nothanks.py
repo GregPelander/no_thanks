@@ -1,4 +1,5 @@
 # nothanks.py -- main game engine
+import copy
 import logging
 import random
 import sys
@@ -24,9 +25,12 @@ class Player:
 def get_play(game_id, players, current_card,
             current_tokens, current_player, catch_exceptions):
     play = 0
+
+    # deep copy objects for protection
+    p = copy.deepcopy(players)
+    cp = copy.deepcopy(current_player)
     try :
-        play = bool(current_player.file(players, current_card,
-                                current_tokens, current_player))
+        play = bool(current_player.file(p, current_card, current_tokens, cp))
     except KeyboardInterrupt :
         raise
     except :
