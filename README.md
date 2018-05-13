@@ -21,9 +21,9 @@ The game ends when there are no cards left in the deck
 
 1. The current player may either take the face up card or, if they have tokens, pass
 2. If they take the card:
-    a. They collect any tokens on the card
-    b. They put the card face up in front of them
-    c. They flip over the next card in the deck and start a new turn
+    1. They collect any tokens on the card
+    2. They put the card face up in front of them
+    3. They flip over the next card in the deck and start a new turn
 3. If they pass, they put a token on the card and it is the next player's turn
 
 *Scoring*
