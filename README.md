@@ -16,7 +16,7 @@ To finish with the lowest score
 *Gameplay*
 The game ends when there are no cards left in the deck
 
-1. The current player may either take the face up card or pass (if they have tokens)
+1. The current player may either take the face up card or, if they have tokens, pass
 2. If they take the card:
     a. They collect any tokens on the card
     b. They put the card face up in front of them

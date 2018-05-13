@@ -68,11 +68,9 @@ def play_games(n,seed,player_names,catch_exceptions) :
         winner = nothanks.play_game(game_num, players, catch_exceptions)
         players[winner].score += 1
         logging.debug('RESULT\tgame:%d\twinner:%s' % (game_num, winner))
-        players.sort(key = lambda x: players[x].score, reverse = True)
-        rank = 0
-        for player in players:
-            rank += 1
-            logging.info('SCORE\tgame %d of %d\t#%d.\t%s\t%s\t%d' % (game_num,n,rank, player.id, player.name, player.score))
+        for id in players:
+            logging.info('SCORE\tgame %d of %d\t%s\t%s\t%d' % (game_num, n, id,
+                players[id].name, players[id].score))
         logging.info('SCORE')
     return players
 

@@ -20,12 +20,13 @@ class Player:
         self.file = file
         self.score = 0
 
+# Get User
 def get_play(game_id, players, current_card,
-            current_tokens, player_index, catch_exceptions):
+            current_tokens, current_player, catch_exceptions):
     play = 0
     try :
-        play = bool(players[player_index].file(players, current_card,
-                                current_tokens, player_index))
+        play = bool(current_player.file(players, current_card,
+                                current_tokens, current_player))
     except KeyboardInterrupt :
         raise
     except :
@@ -49,8 +50,8 @@ def play_game(game_id, players_in, catch_exceptions):
     # Pick a player to start
     random.shuffle(players)
     player_index = 0
-    curent_player = players[player_index]
-    logging.info('Player %s will start' % curent_player.name)
+    current_player = players[player_index]
+    logging.info('*** %s will start ***' % current_player.name)
 
     # Get a deck of (suitless) cards numbered 3 to 35
     deck = list(range(LOWEST_CARD, HIGHEST_CARD))
@@ -60,45 +61,46 @@ def play_game(game_id, players_in, catch_exceptions):
     for _ in range(NUM_REMOVED):
         deck.pop()
 
-    # Flip the top card of the deck face up
+    # Flip over a new card
     current_card = deck.pop()
     current_tokens = 0
-    logging.info('The first card is %i.' % current_card)
+    logging.info('%s flips over the [%i]' \
+        % (current_player.name, current_card))
 
 
 
     ## GAMEPLAY
 
     # The game ends when there are no cards left in the deck
-    while len(deck) > 0:
+    while len(deck):
 
         # The current player may either take the face up card
         # or pass (if they have tokens)
-        if(curent_player.tokens == 0):
+        if(current_player.tokens == 0):
             take_card = True
         else:
             take_card = get_play(game_id, players, current_card,
-                                 current_tokens, player_index, catch_exceptions)
+                                 current_tokens, current_player, catch_exceptions)
 
         if(take_card):
             # They collect any tokens on the card
             current_player.tokens += current_tokens
+            if(current_tokens == 1):
+                logging.info('%s takes the [%i] and 1 token' \
+                    % (current_player.name, current_card))
+            else:
+                logging.info('%s takes the [%i] and %i tokens' \
+                    % (current_player.name, current_card, current_tokens))
             current_tokens = 0
 
             # They put the card face up in front of them
             current_player.cards.append(current_card)
-            if(current_tokens == 1):
-                logging.info('%s takes the %i% and 1 token' \
-                    % current_player.name, current_card)
-            else:
-                logging.info('%s takes the %i% and %i tokens' \
-                    % current_player.name, current_card, current_tokens)
 
             # They flip over the next card in the deck and start a new turn
             current_card = deck.pop()
-            logging.info('%s flips over the %i' \
-                % current_player.name, curent_card)
-            logging.info("it is still %s's turn" % current_player.name)
+            logging.info('%s flips over the [%i]' \
+                % (current_player.name, current_card))
+            logging.info("*** It is still %s's turn ***" % current_player.name)
             continue
 
         else:
@@ -106,19 +108,20 @@ def play_game(game_id, players_in, catch_exceptions):
             current_tokens += 1
             current_player.tokens -= 1
             if(current_tokens == 1):
-                logging.info('%s passes and adds a token. \
-                    There is now 1 on the card'
+                logging.info('%s passes and adds a token. '\
+                    'There is now 1 token on the card'
                     % current_player.name)
             else:
-                logging.info('%s passes and adds a token. \
-                    There are now %i on the card'
-                    % current_player.name, current_tokens)
+                logging.info('%s passes and adds a token. ' \
+                    'There are now %i tokens on the card'
+                    % (current_player.name, current_tokens))
             player_index += 1
-            current_player = players[player_index % players.len()]
-            logging.info("it is now %s's turn" % current_player.name)
+            current_player = players[player_index % len(players)]
+            logging.info("\n*** It is now %s's turn ***" % current_player.name)
             continue
 
     ## SCORING
+
     winner = None
     for player in players:
         # Tokens are worth -1 point each
@@ -133,7 +136,9 @@ def play_game(game_id, players_in, catch_exceptions):
                 player.score += card
             last_card = card
 
-        if(winner is None or player.score > winner.score):
+        logging.info("%s finishes with %i" % (player.name, player.score))
+
+        if(winner is None or player.score < winner.score):
             winner = player
 
     return winner.key
