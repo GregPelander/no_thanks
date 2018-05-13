@@ -5,15 +5,18 @@ No Thanks
 **RULES**
 
 *Objective*
+
 To finish with the lowest score
 
 *Setup*
+
 * Give 11 tokens to each player
 * Get a deck of (suitless) cards numbered 3 to 35
 * Remove 9 cards from the deck at random
 * Flip the top card of the deck face up
 
 *Gameplay*
+
 The game ends when there are no cards left in the deck
 
 1. The current player may either take the face up card or, if they have tokens, pass
@@ -24,6 +27,7 @@ The game ends when there are no cards left in the deck
 3. If they pass, they put a token on the card and it is the next player's turn
 
 *Scoring*
+
 * Tokens are worth -1 point each
 * Single cards are worth their value
 * A sequence of cards is worth the value of the lowest card in the sequence
